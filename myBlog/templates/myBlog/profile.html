@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% load static %}  <!-- Добавьте эту строку для загрузки тега static -->
+
+{% block title %}Профиль пользователя{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center">Профиль пользователя</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="mb-3">
+                {% if profile.avatar %}
+                    <img src="{{ profile.avatar.url }}" alt="Аватар" class="rounded-circle" style="width: 100px; height: 100px;">
+                {% else %}
+                    <img src="{% static 'avatars/default.png' %}" alt="Аватар" class="rounded-circle" style="width: 100px; height: 100px;">
+                {% endif %}
+            </div>
+            <h4>{{ profile.nickname }}</h4>
+            <p class="text-left">Имя: {{ profile.first_name }}</p>
+            <p class="text-left">Фамилия: {{ profile.last_name }}</p>
+            <p class="text-left">Отчество: {{ profile.patronymic }}</p>
+            <p class="text-left">Информация: {{ profile.information|default:"Нет информации" }}</p>
+            <a href="{% url 'myBlog:edit_profile' %}" class="btn btn-secondary mb-3">Редактировать профиль</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
