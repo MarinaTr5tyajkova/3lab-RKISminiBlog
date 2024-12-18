@@ -38,9 +38,34 @@ class UserRegistrationForm(UserCreationForm):
         return user
 
 class UserProfileForm(forms.ModelForm):
+    email = forms.EmailField(required=True)  # Ensure email is included
+    nickname = forms.CharField(max_length=30, required=True, label='Имя пользователя')
+    first_name = forms.CharField(max_length=30, required=True, label='Имя')
+    last_name = forms.CharField(max_length=30, required=True, label='Фамилия')
+    patronymic = forms.CharField(max_length=30, required=True, label='Отчество')
+    avatar = forms.ImageField(required=False, label='Аватар')
+    information = forms.CharField(widget=forms.Textarea, required=False, label='Информация')
+
     class Meta:
         model = Profile
-        fields = ['avatar', 'information']  # Поля для редактирования профиля
+        fields = ['email', 'nickname', 'first_name', 'last_name', 'patronymic', 'avatar', 'information']
+
+    def clean_nickname(self):
+        nickname = self.cleaned_data.get('nickname')
+        if User.objects.filter(username=nickname).exclude(id=self.instance.user.id).exists():
+            raise forms.ValidationError("Этот никнейм уже занят.")
+        return nickname
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data['email']  # Save email
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        user.username = self.cleaned_data['nickname']
+        if commit:
+            user.save()
+        return user
+
 
 class PostForm(forms.ModelForm):
     class Meta:

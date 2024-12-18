@@ -13,7 +13,7 @@
 <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'myBlog:home' %}">Мой Блог</a>
+            <a class="navbar-brand" href="{% url 'myBlog:index' %}">Мой Блог</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -38,6 +38,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'myBlog:login' %}">Вход</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'myBlog:register' %}">Регистрация</a> <!-- Added registration link -->
+                        </li>
                     {% endif %}
                 </ul>
             </div>
@@ -45,16 +48,15 @@
     </nav>
 </header>
 
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
 
-    <main>
-        {% block content %}
-        {% endblock %}
-    </main>
+<footer class="text-center mt-4">
+    <p>© 2024 Мой Блог</p>
+</footer>
 
-    <footer class="text-center mt-4">
-        <p>© 2024 Мой Блог</p>
-    </footer>
-
-    {% bootstrap_javascript jquery='full' %} <!-- Include Bootstrap JS -->
+{% bootstrap_javascript jquery='full' %} <!-- Include Bootstrap JS -->
 </body>
 </html>

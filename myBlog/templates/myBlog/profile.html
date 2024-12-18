@@ -20,6 +20,7 @@
             <p class="text-left">Имя: {{ profile.first_name }}</p>
             <p class="text-left">Фамилия: {{ profile.last_name }}</p>
             <p class="text-left">Отчество: {{ profile.patronymic }}</p>
+            <p class="text-left">Email: {{ request.user.email }}</p> <!-- Display email -->
             <p class="text-left">Информация: {{ profile.information|default:"Нет информации" }}</p>
             <a href="{% url 'myBlog:edit_profile' %}" class="btn btn-secondary mb-3">Редактировать профиль</a>
         </div>

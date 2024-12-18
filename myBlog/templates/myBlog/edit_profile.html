@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load static %}  <!-- Ensure you load static files if needed -->
+
 {% block title %}Редактировать профиль{% endblock %}
 
 {% block content %}
@@ -7,8 +9,58 @@
     <h2>Редактировать профиль</h2>
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+
+        <div class="form-group">
+            {{ form.email.label_tag }}
+            <input type="email" name="email" class="form-control" value="{{ form.email.value|default:'' }}" required>
+            {% for error in form.email.errors %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            {{ form.nickname.label_tag }}
+            <input type="text" name="nickname" class="form-control" value="{{ form.nickname.value|default:'' }}" required>
+            {% for error in form.nickname.errors %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            {{ form.first_name.label_tag }}
+            <input type="text" name="first_name" class="form-control" value="{{ form.first_name.value|default:'' }}" required>
+            {% for error in form.first_name.errors %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            {{ form.last_name.label_tag }}
+            <input type="text" name="last_name" class="form-control" value="{{ form.last_name.value|default:'' }}" required>
+            {% for error in form.last_name.errors %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            {{ form.patronymic.label_tag }}
+            <input type="text" name="patronymic" class="form-control" value="{{ form.patronymic.value|default:'' }}" required>
+            {% for error in form.patronymic.errors %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            {{ form.avatar.label_tag }}
+            <input type="file" name="avatar" class="form-control-file">
+        </div>
+
+        <div class="form-group">
+            {{ form.information.label_tag }}
+            <textarea name="information" class="form-control">{{ form.information.value|default:'' }}</textarea>
+        </div>
+
+        <button type="submit" class="btn btn-secondary mb-3">Сохранить изменения</button>
     </form>
 </div>
 {% endblock %}
