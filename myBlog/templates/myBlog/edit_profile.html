@@ -8,6 +8,8 @@
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
 
+        <!-- Existing form fields -->
+
         <div class="form-group">
             {{ form.email.label_tag }}
             <input type="email" name="email" class="form-control" value="{{ form.email.value|default:'' }}" required>
@@ -58,20 +60,20 @@
             <textarea name="information" class="form-control">{{ form.information.value|default:'' }}</textarea>
         </div>
 
-        <!-- Checkbox for keeping posts -->
+        <!-- Warning and checkbox for keeping posts -->
         <h3>Удалить профиль</h3>
-        <p>Вы уверены, что хотите удалить свой профиль? Это действие необратимо.</p>
+        <p class="text-danger">Вы уверены, что хотите удалить свой профиль? Это действие необратимо.</p>
         <label>
             <input type="checkbox" name="keep_posts"> Сохранить все мои посты?
         </label>
 
-        <!-- Кнопка для сохранения изменений -->
+        <!-- Button for saving changes -->
         <button type="submit" class="btn btn-secondary mb-3">Сохранить изменения</button>
 
-        <!-- Кнопка для удаления профиля -->
-        <button type="submit" name="delete_profile" class="btn btn-danger mb-3">Удалить профиль</button>
+        <!-- Button for deleting profile with confirmation -->
+        <button type="submit" name="delete_profile" class="btn btn-danger mb-3" onclick="return confirm('Вы уверены, что хотите удалить свой профиль?')">Удалить профиль</button>
 
-        <!-- Кнопка для отмены -->
+        <!-- Button for cancel -->
         <a href="{% url 'myBlog:profile' %}" class="btn btn-secondary">Отмена</a>
     </form>
 </div>

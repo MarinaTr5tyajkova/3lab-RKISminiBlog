@@ -1,4 +1,3 @@
-<!-- myBlog/templates/myBlog/post_detail.html -->
 {% extends 'base.html' %}
 
 {% block title %}{{ post.title }}{% endblock %}
@@ -8,12 +7,27 @@
     <h2>{{ post.title }}</h2>
     <p>{{ post.content }}</p>
 
+    <!-- Display author information -->
+    <small>
+        {% if post.author %}
+            Опубликовано: {{ post.author.username }} ({{ post.created_at }})
+        {% else %}
+            Опубликовано: Автор удален ({{ post.created_at }})
+        {% endif %}
+    </small>
+
     <h3>Комментарии</h3>
 
     <ul class="list-group">
         {% for comment in comments %}
             <li class="list-group-item">
-                <strong>{{ comment.author.username }}</strong>: {{ comment.content }}
+                <strong>
+                    {% if comment.author %}
+                        {{ comment.author.username }}
+                    {% else %}
+                        Автор удален
+                    {% endif %}
+                </strong>: {{ comment.content }}
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <!-- Лайк комментария -->
@@ -25,14 +39,18 @@
                         </form>
 
                         <!-- Кнопка редактирования -->
-                        <a href="{% url 'myBlog:edit_comment' comment.id %}" class="btn btn-warning btn-sm">Редактировать</a>
+                        {% if comment.author == request.user %}
+                            <a href="{% url 'myBlog:edit_comment' comment.id %}" class="btn btn-warning btn-sm">Редактировать</a>
+                        {% endif %}
                     </div>
 
                     <!-- Форма удаления комментария -->
-                    <form method="POST" action="{% url 'myBlog:delete_comment' comment.id %}" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
-                    </form>
+                    {% if comment.author == request.user %}
+                        <form method="POST" action="{% url 'myBlog:delete_comment' comment.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                        </form>
+                    {% endif %}
                 </div>
             </li>
         {% empty %}

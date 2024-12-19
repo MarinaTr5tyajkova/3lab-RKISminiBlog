@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     nickname = models.CharField(max_length=30, unique=True)  # Keep this field
     first_name = models.CharField(max_length=30, verbose_name='Имя', blank=False)
     last_name = models.CharField(max_length=30, verbose_name='Фамилия', blank=False)
@@ -16,7 +16,7 @@ class Profile(models.Model):
         return self.nickname
 
 class Post(models.Model):
-    author = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     author_name = models.CharField(max_length=100, blank=True)  # Field for displaying author's name
     title = models.CharField(max_length=255)  # Ensure this field exists
     content = models.TextField()

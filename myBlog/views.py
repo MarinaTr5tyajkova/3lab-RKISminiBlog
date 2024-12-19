@@ -62,13 +62,37 @@ class EditProfileView(View):
         return render(request, 'myBlog/edit_profile.html', {'form': form})
 
     def post(self, request):
-        form = UserProfileForm(request.POST, request.FILES, instance=request.user.profile)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.save()
-            form.save()
-            return redirect('myBlog:profile')
-        return render(request, 'myBlog/edit_profile.html', {'form': form})
+        if 'delete_profile' in request.POST:
+            # Handle profile deletion
+            self.delete_profile(request)
+            return redirect('myBlog:index')
+        else:
+            form = UserProfileForm(request.POST, request.FILES, instance=request.user.profile)
+            if form.is_valid():
+                user = form.save(commit=False)
+                user.save()
+                form.save()
+                return redirect('myBlog:profile')
+            return render(request, 'myBlog/edit_profile.html', {'form': form})
+
+    def delete_profile(self, request):
+        profile = request.user.profile
+        user = request.user
+
+        keep_posts = request.POST.get('keep_posts', False)
+
+        if keep_posts:
+            # Save posts but set author to None or a default value
+            posts = user.post_set.all()
+            for post in posts:
+                post.author = None  # или post.author = some_default_user
+                post.save()
+            user.delete()
+        else:
+            # Delete the user and all associated posts
+            user.delete()
+
+        return redirect('myBlog:index')
 
 
 class CreatePostView(View):
@@ -120,7 +144,7 @@ class PostDetailView(View):  # Обновленное представление
         })
 
 
-class EditCommentView(View):  # Представление для редактирования комментариев
+class EditCommentView(View):
     def get(self, request, comment_id):
         comment = get_object_or_404(Comment.objects.select_related('author'), id=comment_id)
 
@@ -144,9 +168,10 @@ class EditCommentView(View):  # Представление для редакти
             comment.save()
 
             return redirect('myBlog:post_detail', post_id=comment.post.id)
+        return render(request, 'myBlog/edit_comment.html', {'form': form})
 
 
-class DeleteCommentView(View):  # Представление для удаления комментариев
+class DeleteCommentView(View):
     def post(self, request, comment_id):
         comment = get_object_or_404(Comment.objects.select_related('author'), id=comment_id)
 
@@ -155,7 +180,12 @@ class DeleteCommentView(View):  # Представление для удален
 
         post_id = comment.post.id
 
-        comment.delete()
+        if comment.author is None or comment.author == request.user:
+            comment.delete()
+        else:
+            # Если автор комментария не текущий пользователь и не None, то сохраняем комментарий с указанием что автор удален
+            comment.author = None
+            comment.save()
 
         return redirect('myBlog:post_detail', post_id=post_id)
 
