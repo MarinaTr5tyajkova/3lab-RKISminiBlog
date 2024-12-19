@@ -7,7 +7,6 @@
     <h2>{{ post.title }}</h2>
     <p>{{ post.content }}</p>
 
-    <!-- Display author information -->
     <small>
         {% if post.author %}
             Опубликовано: {{ post.author.username }} ({{ post.created_at }})
