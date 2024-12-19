@@ -1,0 +1,50 @@
+<!-- myBlog/templates/myBlog/post_detail.html -->
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>{{ post.title }}</h2>
+    <p>{{ post.content }}</p>
+
+    <h3>Комментарии</h3>
+
+    <ul class="list-group">
+        {% for comment in comments %}
+            <li class="list-group-item">
+                <strong>{{ comment.author.username }}</strong>: {{ comment.content }}
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <!-- Лайк комментария -->
+                        <form method="POST" action="{% url 'myBlog:like_comment' comment.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-light btn-sm">
+                                Лайк ({{ comment.likes.count }})
+                            </button>
+                        </form>
+
+                        <!-- Кнопка редактирования -->
+                        <a href="{% url 'myBlog:edit_comment' comment.id %}" class="btn btn-warning btn-sm">Редактировать</a>
+                    </div>
+
+                    <!-- Форма удаления комментария -->
+                    <form method="POST" action="{% url 'myBlog:delete_comment' comment.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                    </form>
+                </div>
+            </li>
+        {% empty %}
+            <li class="list-group-item">Комментариев нет.</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Добавить комментарий</h3>
+    <form method="POST">
+        {% csrf_token %}
+        {{ comment_form.as_p }}
+        <button type="submit" class="btn btn-primary">Добавить комментарий</button>
+    </form>
+</div>
+{% endblock %}

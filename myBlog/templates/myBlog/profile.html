@@ -25,5 +25,29 @@
             <a href="{% url 'myBlog:edit_profile' %}" class="btn btn-secondary mb-3">Редактировать профиль</a>
         </div>
     </div>
+
+    <h3 class="text-center mt-5">Мои посты</h3>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            {% if posts %}
+                <ul class="list-group">
+                    {% for post in posts %}
+                        <li class="list-group-item">
+                            <h5>{{ post.title }}</h5>
+                            <p>{{ post.content|truncatewords:20 }}</p> <!-- Показываем первые 20 слов -->
+                            <small>Создано: {{ post.created_at }}</small><br>
+                            <a href="{% url 'myBlog:edit_post' post.id %}" class="btn btn-primary btn-sm">Редактировать</a>
+                            <form method="POST" action="{% url 'myBlog:delete_post' post.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>У вас пока нет постов.</p>
+            {% endif %}
+        </div>
+    </div>
 </div>
 {% endblock %}

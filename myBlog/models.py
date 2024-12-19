@@ -16,15 +16,28 @@ class Profile(models.Model):
         return self.nickname
 
 class Post(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    author_name = models.CharField(max_length=100, blank=True)  # Field for displaying author's name
+    title = models.CharField(max_length=255)  # Ensure this field exists
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def save(self, *args, **kwargs):
+        if self.author:
+            self.author_name = self.author.username
+        else:
+            self.author_name = "Удалённый пользователь"
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return f'{self.author.username} - {self.created_at}'
+        return f'{self.author.username if self.author else self.author_name} - {self.created_at}'
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    likes = models.ManyToManyField(User, related_name='liked_comments', blank=True)
+
+    def __str__(self):
+        return f'Comment by {self.author.username} on {self.post.title}'
